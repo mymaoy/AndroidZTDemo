@@ -1,0 +1,13 @@
+<resources>
+    <string name="title_activity_scan_qr_code">12345</string>
+    <string name="close">123</string>
+    <string name="auto_scan_notification">234</string>
+    <string name="notification">456</string>
+    <string name="positive_button_confirm">789</string>
+    <string name="could_not_read_qr_code_from_scanner">901</string>
+    <string name="camera_not_found">124</string>
+    <string name="is_qr_code_scanner">12344</string>
+    <string name="is_open_flashlight">6789</string>
+    <string name="take_photos">6789</string>
+    <string name="title_activity_infor_log">3234</string>
+</resources>
