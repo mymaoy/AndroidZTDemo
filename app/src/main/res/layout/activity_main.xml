@@ -13,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
@@ -30,5 +30,43 @@
                 android:layout_weight="1"
                 android:text="Beep" />
         </LinearLayout>
+          <ImageView
+              android:layout_gravity="center_horizontal"
+                android:id="@+id/img_header"
+                android:layout_width="150dp"
+                android:layout_height="150dp"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/tvtype" android:text="证件类型:"/>
+
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvcode" android:text="证件号码:"/>
+
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvnamechn" android:text="中文姓名:"/>
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvname" android:text="证件姓名:"/>
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvguoji" android:text="证件国籍:"/>
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvsex" android:text="持证性别:"/>
+
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvbirthday" android:text="出生年月:"/>
+
+
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvvalidate" android:text="有效期限:"/>
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvregtime" android:text="识读时间:"/>
+            <TextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:id="@+id/tvqrcode" android:text="二维码:"/>
+        </LinearLayout>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

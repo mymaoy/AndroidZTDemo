@@ -15,6 +15,7 @@ import android.hardware.usb.UsbManager;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.cameralib.view.ScannerFinderView;
 import com.invs.invswlt;
 import com.littt.zt02library.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -101,6 +103,11 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
         if(OCRMyApplication.ReadOCREnable)
         {
             OCRMyApplication.ReadOCREnable=false;
+
+//            for(int i=0;i<OCRMyApplication.RegAllData.length;i++)
+//            {
+//                OCRMyApplication.RegAllData[i]=OCRMyApplication.RegAllData[i]+" 222";
+//            }
             String s=StringToJSON(OCRMyApplication.RegAllData);
             return s;
         }
@@ -122,6 +129,7 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
         sjson=sjson+"\"QREData\":\""+RegResult[n++]+"\"}";
         return sjson;
     }
+
     public int InitAllDev() {
         //初始化设备
         CameraManager.init();
@@ -781,6 +789,7 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
             while(true)
             {
 
+                Log.v("ABC","EIDXXX--11");
                 if(OCRMyApplication.Read_OCR_IC_ThreadEnable)
                 {
 
@@ -792,6 +801,7 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
                     }
                     continue;//如果正在读 芯片,就不做OCR 分析
                 }
+                Log.v("ABC","EIDXXX--122");
                 if(OCRMyApplication.srcBitmap==null)
                 {
                     try {
@@ -880,6 +890,7 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
                                 for (int i = 0; i < 8; i++)
                                     OCRMyApplication.RegAllData[i] = sInfo[i];
                                 LEDWhiteOn();
+                                OCRMyApplication.ReadOCREnable=true;
 
                                 try {
                                     sleep(150);
@@ -956,6 +967,7 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
 
                                 } else {
                                     Log.d("ABC", "A-"+resultA.getText());
+                                    OCRMyApplication.RegAllData[10]=resultA.getText();
                                     //GetDispQRE(resultA.getText());
                                 }
                             }
@@ -1088,7 +1100,7 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
 
                         byte[] RxBuff = TestReadIDWithPhoto();
                         RegTimems = System.currentTimeMillis() - RegTimems;
-
+                        OCRMyApplication.RegAllData[6]=RegTimems+" ms";
                         if (RxBuff != null) {
                             int rxlen = RxBuff.length;
                             bmpsrc = null;
@@ -1099,22 +1111,31 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
                                 int n = 0;
                                 sName = GetStringUTF16(RxBuff, 0, 15 * 2);
                                 s_Name = sName;
+                                OCRMyApplication.RegAllData[3]=sName;
+
                                 n = 15 * 2;
                                 sSex = GetStringUTF16(RxBuff, n, 1 * 2);
                                 if (sSex.contains("1")) sSex = "男";
                                 s_Sex = sSex;
                                 n = n + 2;
+                                OCRMyApplication.RegAllData[7]=s_Sex;
 
                                 sNationA = GetStringUTF16(RxBuff, n, 2 * 2);
                                 n = n + 4;
 
+
                                 sBirth = GetStringUTF16(RxBuff, n, 8 * 2);
                                 s_birth = sBirth;
+                                OCRMyApplication.RegAllData[5]=s_birth+"";
                                 n = n + 16;
                                 sAdr = GetStringUTF16(RxBuff, n, 70);
                                 n = n + 70;
                                 sNumber = GetStringUTF16(RxBuff, n, 36);
                                 s_code = sNumber;
+
+                                OCRMyApplication.RegAllData[1]=s_code+"";
+
+
                                 n = n + 36;
 
                                 sNationB = GetStringUTF16(RxBuff, n, 30);
@@ -1125,11 +1146,14 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
 
                                 sEndTime = GetStringUTF16(RxBuff, n, 16);
                                 s_day = sEndTime;
+                                OCRMyApplication.RegAllData[8]=s_day+"";
                                 n = n + 16;
 
                                 sName = sName.trim() + "," + sSex.trim() + "," + sNationA.trim() + "," + sBirth.trim() + "\r\n" + sAdr.trim() + "\r\n" + sNumber.trim() + "," + sNationB.trim() + "\r\n" + sBeginTime.trim() + "," + sEndTime.trim();
                                 Log.v("ABC_Reg", sName);
                                 sMRZAllString = sName;
+
+                                OCRMyApplication.RegAllData[0]="二代证";
 
                                 if (rxlen < 1280) return;//1281,0
                                 byte[] picbuf = new byte[1024];
@@ -1149,9 +1173,10 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
                                     Log.v("ABC_Reg", "ZpData=null");
                                 }
 
-
+                                OCRMyApplication.ReadOCREnable=true;
                                 try {
                                     bmpsrc = BitmapFactory.decodeByteArray(ZpData, 0, 38862);
+                                    OCRMyApplication.RegAllData[9]=convertIconToString(bmpsrc);
                                 } catch (Exception e) {
                                     Log.v("ABC_Reg", "BitmapFactory ---ERROR ");
                                     //e.printStackTrace();
@@ -1202,6 +1227,14 @@ public class ZTCardReaderLib implements   Camera.PictureCallback{
 
         }
 
+    }
+
+    private String convertIconToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();// outputstream
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] appicon = baos.toByteArray();// 转为byte数组
+        String img = Base64.encodeToString(appicon, Base64.DEFAULT);
+        return img;
     }
 
 

@@ -109,10 +109,37 @@ final class DecodeHandler extends Handler {
     boolean GetFaceEnable=false;
     private void decode(byte[] data, int width, int height) {
 
-        RecongBmp(data,width, height,"A");
+        //RecongBmp(data,width, height,"A");
+        GetIMGDo(data,width, height);
     }
 
-
+    private void GetIMGDo(byte[] data, int width, int height)
+    {
+        Log.v("ABC_PIC","GetIMGDo --PIC");
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = true;
+        YuvImage yuvimage = new YuvImage(
+                data,
+                ImageFormat.NV21,
+                width,
+                height,
+                null);
+        baos = new ByteArrayOutputStream();
+        yuvimage.compressToJpeg(new Rect(0, 0, width, height), 100, baos);// 80--JPG图片的质量[0-100],100最高
+        rawImage = baos.toByteArray();
+        //  将rawImage转换成bitmap
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        OCRMyApplication.srcBitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
+        mMultiFormatReader.reset();
+//        try
+//        {
+//            Message message = Message.obtain(mActivity.getCaptureActivityHandler(), R.id.decode_failed);
+//            message.sendToTarget();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
 
     private void RecongBmp(byte[] data, int width, int height,String cc) {
 
@@ -133,8 +160,8 @@ final class DecodeHandler extends Handler {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
-        if(OCRMyApplication.ReadOCREnable)
-       OCRRegString(bitmap);
+      //  if(OCRMyApplication.ReadOCREnable)
+      // OCRRegString(bitmap);
        //GetFaceMatFromBmp(bitmap);
         
 
